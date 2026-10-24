@@ -13,6 +13,7 @@ void ignorarLinha() {
 void mostrarMenu() {
     std::cout << "1. Cadastrar categoria\n";
     std::cout << "2. Definir limite\n";
+    std::cout << "3. Registrar gastos\n";
     std::cout << "0. Sair\n";
 }
 
@@ -56,6 +57,44 @@ void definirLimite(Carteira &carteira) {
     }
 }
 
+void registrarGasto(Carteira &carteira) {
+    std::string descricao;
+    double valor;
+    std::string data;
+    std::string categoria;
+
+    std::cout << "Descrição: ";
+    std::getline(std::cin, descricao);
+
+    std::cout << "Valor: ";
+    if (!(std::cin >> valor)) {
+        std::cin.clear();
+        ignorarLinha();
+        std::cout << "Entrada inválida, tente de novo\n";
+        return;
+    }
+    ignorarLinha();
+
+    std::cout << "Data: ";
+    std::getline(std::cin, data);
+
+    std::cout << "Categoria: ";
+    std::getline(std::cin, categoria);
+
+    ResultadoGasto resultado =
+        carteira.registrarGasto(descricao, valor, data, categoria);
+
+    if (resultado == GASTO_OK) {
+        std::cout << "Gasto registrado\n";
+    } else if (resultado == GASTO_VALOR_INVALIDO) {
+        std::cout << "Valor inválido\n";
+    } else if (resultado == GASTO_DATA_INVALIDA) {
+        std::cout << "Data inválida\n";
+    } else {
+        std::cout << "Categoria não encontrada\n";
+    }
+}
+
 }
 
 void executarInterface(Carteira &carteira) {
@@ -79,6 +118,8 @@ void executarInterface(Carteira &carteira) {
             cadastrarCategoria(carteira);
         } else if (opcao == 2) {
             definirLimite(carteira);
+        } else if (opcao == 3) {
+            registrarGasto(carteira);
         } else {
             std::cout << "Opção inválida, tente de novo\n";
         }
