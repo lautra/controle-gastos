@@ -18,6 +18,7 @@ void mostrarMenu() {
     std::cout << "3. Registrar gastos\n";
     std::cout << "4. Total por categoria\n";
     std::cout << "5. Maiores gastos do m\u00eas\n";
+    std::cout << "6. Categoria acima do limite\n";
     std::cout << "0. Sair\n";
 }
 
@@ -179,6 +180,51 @@ void maioresGastosDoMes(Carteira &carteira) {
     }
 }
 
+void categoriasAcimaDoLimite(Carteira &carteira) {
+    int mes;
+    int ano;
+
+    std::cout << "M\u00eas: ";
+    if (!(std::cin >> mes)) {
+        std::cin.clear();
+        ignorarLinha();
+        std::cout << "Entrada inv\u00e1lida, tente de novo\n";
+        return;
+    }
+
+    std::cout << "Ano: ";
+    if (!(std::cin >> ano)) {
+        std::cin.clear();
+        ignorarLinha();
+        std::cout << "Entrada inv\u00e1lida, tente de novo\n";
+        return;
+    }
+    ignorarLinha();
+
+    if (!carteira.mesAnoValido(mes, ano)) {
+        std::cout << "Data inv\u00e1lida\n";
+        return;
+    }
+
+    if (!carteira.temGastosNoMes(mes, ano)) {
+        std::cout << "Nenhum gasto registrado nesse m\u00eas\n";
+        return;
+    }
+
+    std::vector<ResumoCategoria> res = carteira.categoriasAcimaDoLimite(mes, ano);
+    if (res.empty()) {
+        std::cout << "Nenhuma categoria passou do limite\n";
+        return;
+    }
+
+    std::cout << std::fixed << std::setprecision(2);
+    for (std::vector<ResumoCategoria>::const_iterator it = res.begin();
+         it != res.end(); ++it) {
+        std::cout << it->nome << ": " << it->total << " de " << it->limite
+                  << "\n";
+    }
+}
+
 }
 
 void executarInterface(Carteira &carteira) {
@@ -208,6 +254,8 @@ void executarInterface(Carteira &carteira) {
             totalPorCategoria(carteira);
         } else if (opcao == 5) {
             maioresGastosDoMes(carteira);
+        } else if (opcao == 6) {
+            categoriasAcimaDoLimite(carteira);
         } else {
             std::cout << "Op\u00e7\u00e3o inv\u00e1lida, tente de novo\n";
         }

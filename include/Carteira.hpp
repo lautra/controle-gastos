@@ -45,6 +45,7 @@ public:
     bool temGastosNoMes(int mes, int ano) const;
     std::vector<ResumoCategoria> totaisPorCategoria(int mes, int ano);
     std::vector<Gasto> maioresGastosDoMes(int mes, int ano);
+    std::vector<ResumoCategoria> categoriasAcimaDoLimite(int mes, int ano);
 
 private:
     bool dataValida(const std::string &data) const;

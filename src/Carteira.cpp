@@ -154,6 +154,35 @@ std::vector<Gasto> Carteira::maioresGastosDoMes(int mes, int ano) {
     return selecionados;
 }
 
+std::vector<ResumoCategoria> Carteira::categoriasAcimaDoLimite(int mes, int ano) {
+    std::vector<ResumoCategoria> resultado;
+    if (!mesAnoValido(mes, ano)) {
+        return resultado;
+    }
+
+    std::map<std::string, double> totais = somarGastosDoMes(mes, ano);
+    std::map<std::string, Categoria>::const_iterator itCat;
+
+    for (itCat = categorias.begin(); itCat != categorias.end(); ++itCat) {
+        double total = 0.0;
+        std::map<std::string, double>::iterator itTotal =
+            totais.find(itCat->first);
+        if (itTotal != totais.end()) {
+            total = itTotal->second;
+        }
+
+        if (itCat->second.passouDoLimite(total)) {
+            ResumoCategoria r;
+            r.nome = itCat->first;
+            r.total = total;
+            r.limite = itCat->second.getLimite();
+            resultado.push_back(r);
+        }
+    }
+
+    return resultado;
+}
+
 bool Carteira::dataValida(const std::string &data) const {
     if (data.size() != 10 || data[2] != '/' || data[5] != '/') {
         return false;
