@@ -4,9 +4,16 @@
 #include <list>
 #include <map>
 #include <string>
+#include <vector>
 
 #include "Categoria.hpp"
 #include "Gasto.hpp"
+
+struct ResumoCategoria {
+    std::string nome;
+    double total;
+    double limite;
+};
 
 enum ResultadoCategoria {
     CATEGORIA_OK,
@@ -34,12 +41,18 @@ public:
                                   const std::string &data,
                                   const std::string &categoria);
 
+    bool mesAnoValido(int mes, int ano) const;
+    bool temGastosNoMes(int mes, int ano) const;
+    std::vector<ResumoCategoria> totaisPorCategoria(int mes, int ano);
+    std::vector<Gasto> maioresGastosDoMes(int mes, int ano);
+
 private:
     bool dataValida(const std::string &data) const;
     void separarData(const std::string &data, int &dia, int &mes,
                      int &ano) const;
     bool bissexto(int ano) const;
     int diasNoMes(int mes, int ano) const;
+    std::map<std::string, double> somarGastosDoMes(int mes, int ano) const;
 
     std::map<std::string, Categoria> categorias;
     std::list<Gasto> gastos;

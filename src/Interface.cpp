@@ -1,8 +1,10 @@
 #include "Interface.hpp"
 
+#include <iomanip>
 #include <iostream>
 #include <limits>
 #include <string>
+#include <vector>
 
 namespace {
 
@@ -14,6 +16,8 @@ void mostrarMenu() {
     std::cout << "1. Cadastrar categoria\n";
     std::cout << "2. Definir limite\n";
     std::cout << "3. Registrar gastos\n";
+    std::cout << "4. Total por categoria\n";
+    std::cout << "5. Maiores gastos do m\u00eas\n";
     std::cout << "0. Sair\n";
 }
 
@@ -95,6 +99,86 @@ void registrarGasto(Carteira &carteira) {
     }
 }
 
+void totalPorCategoria(Carteira &carteira) {
+    int mes;
+    int ano;
+
+    std::cout << "M\u00eas: ";
+    if (!(std::cin >> mes)) {
+        std::cin.clear();
+        ignorarLinha();
+        std::cout << "Entrada inv\u00e1lida, tente de novo\n";
+        return;
+    }
+
+    std::cout << "Ano: ";
+    if (!(std::cin >> ano)) {
+        std::cin.clear();
+        ignorarLinha();
+        std::cout << "Entrada inv\u00e1lida, tente de novo\n";
+        return;
+    }
+    ignorarLinha();
+
+    if (!carteira.mesAnoValido(mes, ano)) {
+        std::cout << "Data inv\u00e1lida\n";
+        return;
+    }
+
+    if (!carteira.temGastosNoMes(mes, ano)) {
+        std::cout << "Nenhum gasto registrado nesse m\u00eas\n";
+        return;
+    }
+
+    std::vector<ResumoCategoria> res = carteira.totaisPorCategoria(mes, ano);
+    std::cout << std::fixed << std::setprecision(2);
+    for (std::vector<ResumoCategoria>::const_iterator it = res.begin();
+         it != res.end(); ++it) {
+        std::cout << it->nome << ": " << it->total << " de " << it->limite
+                  << "\n";
+    }
+}
+
+void maioresGastosDoMes(Carteira &carteira) {
+    int mes;
+    int ano;
+
+    std::cout << "M\u00eas: ";
+    if (!(std::cin >> mes)) {
+        std::cin.clear();
+        ignorarLinha();
+        std::cout << "Entrada inv\u00e1lida, tente de novo\n";
+        return;
+    }
+
+    std::cout << "Ano: ";
+    if (!(std::cin >> ano)) {
+        std::cin.clear();
+        ignorarLinha();
+        std::cout << "Entrada inv\u00e1lida, tente de novo\n";
+        return;
+    }
+    ignorarLinha();
+
+    if (!carteira.mesAnoValido(mes, ano)) {
+        std::cout << "Data inv\u00e1lida\n";
+        return;
+    }
+
+    if (!carteira.temGastosNoMes(mes, ano)) {
+        std::cout << "Nenhum gasto registrado nesse m\u00eas\n";
+        return;
+    }
+
+    std::vector<Gasto> lista = carteira.maioresGastosDoMes(mes, ano);
+    std::cout << std::fixed << std::setprecision(2);
+    for (size_t i = 0; i < lista.size(); ++i) {
+        std::cout << (i + 1) << ". " << lista[i].getValor() << " - "
+                  << lista[i].getDescricao() << " (" << lista[i].getData()
+                  << ", " << lista[i].getCategoria() << ")\n";
+    }
+}
+
 }
 
 void executarInterface(Carteira &carteira) {
@@ -120,8 +204,12 @@ void executarInterface(Carteira &carteira) {
             definirLimite(carteira);
         } else if (opcao == 3) {
             registrarGasto(carteira);
+        } else if (opcao == 4) {
+            totalPorCategoria(carteira);
+        } else if (opcao == 5) {
+            maioresGastosDoMes(carteira);
         } else {
-            std::cout << "Opção inválida, tente de novo\n";
+            std::cout << "Op\u00e7\u00e3o inv\u00e1lida, tente de novo\n";
         }
     }
 }

@@ -1,5 +1,6 @@
 #include "Carteira.hpp"
 
+#include <algorithm>
 #include <utility>
 
 ResultadoCategoria Carteira::cadastrarCategoria(const std::string &nome) {
@@ -45,6 +46,112 @@ ResultadoGasto Carteira::registrarGasto(const std::string &descricao,
     gastos.push_back(Gasto(descricao, valor, data, categoria, proximaOrdem));
     proximaOrdem = proximaOrdem + 1;
     return GASTO_OK;
+}
+
+bool Carteira::mesAnoValido(int mes, int ano) const {
+    return mes >= 1 && mes <= 12 && ano >= 1;
+}
+
+bool Carteira::temGastosNoMes(int mes, int ano) const {
+    if (!mesAnoValido(mes, ano)) {
+        return false;
+    }
+
+    std::list<Gasto>::const_iterator it;
+    for (it = gastos.begin(); it != gastos.end(); ++it) {
+        int dia;
+        int gmes;
+        int gano;
+        separarData(it->getData(), dia, gmes, gano);
+        if (gmes == mes && gano == ano) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+std::map<std::string, double> Carteira::somarGastosDoMes(int mes, int ano) const {
+    std::map<std::string, double> totais;
+    std::list<Gasto>::const_iterator it;
+
+    if (!mesAnoValido(mes, ano)) {
+        return totais;
+    }
+
+    for (it = gastos.begin(); it != gastos.end(); ++it) {
+        int dia;
+        int gmes;
+        int gano;
+        separarData(it->getData(), dia, gmes, gano);
+        if (gmes == mes && gano == ano) {
+            totais[it->getCategoria()] += it->getValor();
+        }
+    }
+
+    return totais;
+}
+
+std::vector<ResumoCategoria> Carteira::totaisPorCategoria(int mes, int ano) {
+    std::vector<ResumoCategoria> resultado;
+    if (!mesAnoValido(mes, ano)) {
+        return resultado;
+    }
+
+    std::map<std::string, double> totais = somarGastosDoMes(mes, ano);
+    std::map<std::string, Categoria>::const_iterator itCat;
+
+    for (itCat = categorias.begin(); itCat != categorias.end(); ++itCat) {
+        ResumoCategoria r;
+        r.nome = itCat->first;
+        r.limite = itCat->second.getLimite();
+        std::map<std::string, double>::iterator itTotal = totais.find(itCat->first);
+        if (itTotal == totais.end()) {
+            r.total = 0.0;
+        } else {
+            r.total = itTotal->second;
+        }
+        resultado.push_back(r);
+    }
+
+    return resultado;
+}
+
+namespace {
+
+bool compararGastosMaior(const Gasto &a, const Gasto &b) {
+    if (a.getValor() != b.getValor()) {
+        return a.getValor() > b.getValor();
+    }
+    return a.getOrdem() < b.getOrdem();
+}
+
+}
+
+std::vector<Gasto> Carteira::maioresGastosDoMes(int mes, int ano) {
+    std::vector<Gasto> selecionados;
+    if (!mesAnoValido(mes, ano)) {
+        return selecionados;
+    }
+
+    std::list<Gasto>::const_iterator it;
+    for (it = gastos.begin(); it != gastos.end(); ++it) {
+        int dia;
+        int gmes;
+        int gano;
+        separarData(it->getData(), dia, gmes, gano);
+        if (gmes == mes && gano == ano) {
+            selecionados.push_back(*it);
+        }
+    }
+
+    std::sort(selecionados.begin(), selecionados.end(), compararGastosMaior);
+
+    if (selecionados.size() > 3) {
+        selecionados.erase(selecionados.begin() + 3, selecionados.end());
+    }
+
+    return selecionados;
 }
 
 bool Carteira::dataValida(const std::string &data) const {
