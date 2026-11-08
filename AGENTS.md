@@ -29,3 +29,15 @@
   IA" do `README.md`. Essas partes são escritas pelo estudante. Se achar que
   a descrição precisa mudar, sugira a mudança.
 - Não faça commit e não mexa no histórico do Git.
+
+# Trabalho final (arquivo, exceções e revisão)
+- Arquivo de texto com `<fstream>` e exceções com `<stdexcept>` passam a ser
+permitidos (`invalid_argument` e `runtime_error`). Não crie tipos de
+exceção novos.
+- A leitura e a escrita de arquivo ficam numa classe própria. As outras
+classes não abrem arquivo.
+- `throw` nas classes do sistema; `try`/`catch` somente na interface (menu).
+- Quando o estudante pedir uma revisão, não edite nenhum arquivo: liste os
+problemas com o arquivo e a linha.
+- Não altere a seção "Evolução" do `README.md`. Ela é escrita pelo
+estudante.
