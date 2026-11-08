@@ -4,6 +4,10 @@
 #include <utility>
 
 ResultadoCategoria Carteira::cadastrarCategoria(const std::string &nome) {
+    if (nome.find(';') != std::string::npos) {
+        return CATEGORIA_NOME_INVALIDO;
+    }
+
     if (categorias.find(nome) != categorias.end()) {
         return CATEGORIA_JA_EXISTE;
     }
@@ -14,6 +18,10 @@ ResultadoCategoria Carteira::cadastrarCategoria(const std::string &nome) {
 
 ResultadoLimite Carteira::definirLimite(const std::string &nome,
                                         double limite) {
+    if (nome.find(';') != std::string::npos) {
+        return LIMITE_NOME_INVALIDO;
+    }
+
     std::map<std::string, Categoria>::iterator it = categorias.find(nome);
 
     if (it == categorias.end()) {
@@ -31,6 +39,11 @@ ResultadoLimite Carteira::definirLimite(const std::string &nome,
 ResultadoGasto Carteira::registrarGasto(const std::string &descricao,
                                         double valor, const std::string &data,
                                         const std::string &categoria) {
+    if (descricao.find(';') != std::string::npos ||
+        categoria.find(';') != std::string::npos) {
+        return GASTO_TEXTO_INVALIDO;
+    }
+
     if (valor <= 0.0) {
         return GASTO_VALOR_INVALIDO;
     }
@@ -181,6 +194,14 @@ std::vector<ResumoCategoria> Carteira::categoriasAcimaDoLimite(int mes, int ano)
     }
 
     return resultado;
+}
+
+const std::map<std::string, Categoria> &Carteira::getCategorias() const {
+    return categorias;
+}
+
+const std::list<Gasto> &Carteira::getGastos() const {
+    return gastos;
 }
 
 bool Carteira::dataValida(const std::string &data) const {

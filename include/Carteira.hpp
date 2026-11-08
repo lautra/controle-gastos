@@ -17,20 +17,23 @@ struct ResumoCategoria {
 
 enum ResultadoCategoria {
     CATEGORIA_OK,
-    CATEGORIA_JA_EXISTE
+    CATEGORIA_JA_EXISTE,
+    CATEGORIA_NOME_INVALIDO
 };
 
 enum ResultadoLimite {
     LIMITE_OK,
     LIMITE_CATEGORIA_NAO_ENCONTRADA,
-    LIMITE_INVALIDO
+    LIMITE_INVALIDO,
+    LIMITE_NOME_INVALIDO
 };
 
 enum ResultadoGasto {
     GASTO_OK,
     GASTO_CATEGORIA_NAO_ENCONTRADA,
     GASTO_VALOR_INVALIDO,
-    GASTO_DATA_INVALIDA
+    GASTO_DATA_INVALIDA,
+    GASTO_TEXTO_INVALIDO
 };
 
 class Carteira {
@@ -46,6 +49,9 @@ public:
     std::vector<ResumoCategoria> totaisPorCategoria(int mes, int ano);
     std::vector<Gasto> maioresGastosDoMes(int mes, int ano);
     std::vector<ResumoCategoria> categoriasAcimaDoLimite(int mes, int ano);
+
+    const std::map<std::string, Categoria> &getCategorias() const;
+    const std::list<Gasto> &getGastos() const;
 
 private:
     bool dataValida(const std::string &data) const;

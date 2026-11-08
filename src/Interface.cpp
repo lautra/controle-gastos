@@ -3,8 +3,11 @@
 #include <iomanip>
 #include <iostream>
 #include <limits>
+#include <stdexcept>
 #include <string>
 #include <vector>
+
+#include "Arquivo.hpp"
 
 namespace {
 
@@ -28,8 +31,12 @@ void cadastrarCategoria(Carteira &carteira) {
     std::cout << "Nome da categoria: ";
     std::getline(std::cin, nome);
 
-    if (carteira.cadastrarCategoria(nome) == CATEGORIA_OK) {
+    ResultadoCategoria resultado = carteira.cadastrarCategoria(nome);
+
+    if (resultado == CATEGORIA_OK) {
         std::cout << "Categoria cadastrada\n";
+    } else if (resultado == CATEGORIA_NOME_INVALIDO) {
+        std::cout << "Não use ; no texto\n";
     } else {
         std::cout << "Categoria já cadastrada\n";
     }
@@ -55,6 +62,8 @@ void definirLimite(Carteira &carteira) {
 
     if (resultado == LIMITE_OK) {
         std::cout << "Limite definido\n";
+    } else if (resultado == LIMITE_NOME_INVALIDO) {
+        std::cout << "Não use ; no texto\n";
     } else if (resultado == LIMITE_INVALIDO) {
         std::cout << "Valor inválido\n";
     } else {
@@ -91,6 +100,8 @@ void registrarGasto(Carteira &carteira) {
 
     if (resultado == GASTO_OK) {
         std::cout << "Gasto registrado\n";
+    } else if (resultado == GASTO_TEXTO_INVALIDO) {
+        std::cout << "Não use ; no texto\n";
     } else if (resultado == GASTO_VALOR_INVALIDO) {
         std::cout << "Valor inválido\n";
     } else if (resultado == GASTO_DATA_INVALIDA) {
@@ -229,6 +240,13 @@ void categoriasAcimaDoLimite(Carteira &carteira) {
 
 void executarInterface(Carteira &carteira) {
     int opcao;
+    Arquivo arquivo;
+
+    try {
+        arquivo.carregar(carteira);
+    } catch (const std::invalid_argument &) {
+        std::cout << "Arquivo de dados inválido, começando vazio\n";
+    }
 
     while (true) {
         mostrarMenu();
@@ -243,6 +261,11 @@ void executarInterface(Carteira &carteira) {
         ignorarLinha();
 
         if (opcao == 0) {
+            try {
+                arquivo.salvar(carteira);
+            } catch (const std::runtime_error &) {
+                std::cout << "Não consegui salvar os dados\n";
+            }
             return;
         } else if (opcao == 1) {
             cadastrarCategoria(carteira);
