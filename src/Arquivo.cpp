@@ -67,36 +67,36 @@ void Arquivo::carregar(Carteira &carteira) const {
     std::vector<std::string>::const_iterator it;
     for (it = linhas.begin(); it != linhas.end(); ++it) {
         if (it->empty()) {
-            throw std::invalid_argument("linha vazia");
+            throw std::invalid_argument(
+                "Arquivo de dados inválido, começando vazio");
         }
 
         std::vector<std::string> campos = dividirLinha(*it);
 
         if (campos[0] == "C") {
             if (campos.size() != 3) {
-                throw std::invalid_argument("campos da categoria");
+                throw std::invalid_argument(
+                    "Arquivo de dados inválido, começando vazio");
             }
 
             if (campos[1].empty()) {
-                throw std::invalid_argument("nome vazio");
+                throw std::invalid_argument(
+                    "Arquivo de dados inválido, começando vazio");
             }
 
             double limite;
             if (!textoParaDouble(campos[2], limite)) {
-                throw std::invalid_argument("limite invalido");
+                throw std::invalid_argument(
+                    "Arquivo de dados inválido, começando vazio");
             }
 
-            if (temporaria.cadastrarCategoria(campos[1]) != CATEGORIA_OK) {
-                throw std::invalid_argument("categoria repetida");
-            }
-
-            if (temporaria.definirLimite(campos[1], limite) != LIMITE_OK) {
-                throw std::invalid_argument("limite invalido");
-            }
+            temporaria.cadastrarCategoria(campos[1]);
+            temporaria.definirLimite(campos[1], limite);
         } else if (campos[0] == "G") {
             linhasGasto.push_back(*it);
         } else {
-            throw std::invalid_argument("tipo invalido");
+            throw std::invalid_argument(
+                "Arquivo de dados inválido, começando vazio");
         }
     }
 
@@ -104,22 +104,22 @@ void Arquivo::carregar(Carteira &carteira) const {
         std::vector<std::string> campos = dividirLinha(*it);
 
         if (campos.size() != 5) {
-            throw std::invalid_argument("campos do gasto");
+            throw std::invalid_argument(
+                "Arquivo de dados inválido, começando vazio");
         }
 
         if (campos[1].empty() || campos[4].empty()) {
-            throw std::invalid_argument("texto vazio");
+            throw std::invalid_argument(
+                "Arquivo de dados inválido, começando vazio");
         }
 
         double valor;
         if (!textoParaDouble(campos[2], valor)) {
-            throw std::invalid_argument("valor invalido");
+            throw std::invalid_argument(
+                "Arquivo de dados inválido, começando vazio");
         }
 
-        if (temporaria.registrarGasto(campos[1], valor, campos[3], campos[4]) !=
-            GASTO_OK) {
-            throw std::invalid_argument("gasto invalido");
-        }
+        temporaria.registrarGasto(campos[1], valor, campos[3], campos[4]);
     }
 
     carteira = temporaria;
@@ -128,7 +128,7 @@ void Arquivo::carregar(Carteira &carteira) const {
 void Arquivo::salvar(const Carteira &carteira) const {
     std::ofstream arquivo(nomeArquivo.c_str());
     if (!arquivo.is_open()) {
-        throw std::runtime_error("nao consegui abrir para salvar");
+        throw std::runtime_error("Não consegui salvar os dados");
     }
 
     arquivo << std::setprecision(15);
@@ -151,6 +151,6 @@ void Arquivo::salvar(const Carteira &carteira) const {
 
     arquivo.close();
     if (arquivo.fail()) {
-        throw std::runtime_error("nao consegui salvar");
+        throw std::runtime_error("Não consegui salvar os dados");
     }
 }

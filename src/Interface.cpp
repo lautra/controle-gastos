@@ -1,9 +1,9 @@
 #include "Interface.hpp"
 
+#include <exception>
 #include <iomanip>
 #include <iostream>
 #include <limits>
-#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -31,14 +31,11 @@ void cadastrarCategoria(Carteira &carteira) {
     std::cout << "Nome da categoria: ";
     std::getline(std::cin, nome);
 
-    ResultadoCategoria resultado = carteira.cadastrarCategoria(nome);
-
-    if (resultado == CATEGORIA_OK) {
+    try {
+        carteira.cadastrarCategoria(nome);
         std::cout << "Categoria cadastrada\n";
-    } else if (resultado == CATEGORIA_NOME_INVALIDO) {
-        std::cout << "Não use ; no texto\n";
-    } else {
-        std::cout << "Categoria já cadastrada\n";
+    } catch (const std::exception &e) {
+        std::cout << e.what() << "\n";
     }
 }
 
@@ -58,16 +55,11 @@ void definirLimite(Carteira &carteira) {
     }
     ignorarLinha();
 
-    ResultadoLimite resultado = carteira.definirLimite(nome, limite);
-
-    if (resultado == LIMITE_OK) {
+    try {
+        carteira.definirLimite(nome, limite);
         std::cout << "Limite definido\n";
-    } else if (resultado == LIMITE_NOME_INVALIDO) {
-        std::cout << "Não use ; no texto\n";
-    } else if (resultado == LIMITE_INVALIDO) {
-        std::cout << "Valor inválido\n";
-    } else {
-        std::cout << "Categoria não encontrada\n";
+    } catch (const std::exception &e) {
+        std::cout << e.what() << "\n";
     }
 }
 
@@ -95,19 +87,11 @@ void registrarGasto(Carteira &carteira) {
     std::cout << "Categoria: ";
     std::getline(std::cin, categoria);
 
-    ResultadoGasto resultado =
+    try {
         carteira.registrarGasto(descricao, valor, data, categoria);
-
-    if (resultado == GASTO_OK) {
         std::cout << "Gasto registrado\n";
-    } else if (resultado == GASTO_TEXTO_INVALIDO) {
-        std::cout << "Não use ; no texto\n";
-    } else if (resultado == GASTO_VALOR_INVALIDO) {
-        std::cout << "Valor inválido\n";
-    } else if (resultado == GASTO_DATA_INVALIDA) {
-        std::cout << "Data inválida\n";
-    } else {
-        std::cout << "Categoria não encontrada\n";
+    } catch (const std::exception &e) {
+        std::cout << e.what() << "\n";
     }
 }
 
@@ -132,22 +116,22 @@ void totalPorCategoria(Carteira &carteira) {
     }
     ignorarLinha();
 
-    if (!carteira.mesAnoValido(mes, ano)) {
-        std::cout << "Data inv\u00e1lida\n";
-        return;
-    }
+    try {
+        if (!carteira.temGastosNoMes(mes, ano)) {
+            std::cout << "Nenhum gasto registrado nesse m\u00eas\n";
+            return;
+        }
 
-    if (!carteira.temGastosNoMes(mes, ano)) {
-        std::cout << "Nenhum gasto registrado nesse m\u00eas\n";
-        return;
-    }
-
-    std::vector<ResumoCategoria> res = carteira.totaisPorCategoria(mes, ano);
-    std::cout << std::fixed << std::setprecision(2);
-    for (std::vector<ResumoCategoria>::const_iterator it = res.begin();
-         it != res.end(); ++it) {
-        std::cout << it->nome << ": " << it->total << " de " << it->limite
-                  << "\n";
+        std::vector<ResumoCategoria> res =
+            carteira.totaisPorCategoria(mes, ano);
+        std::cout << std::fixed << std::setprecision(2);
+        for (std::vector<ResumoCategoria>::const_iterator it = res.begin();
+             it != res.end(); ++it) {
+            std::cout << it->nome << ": " << it->total << " de "
+                      << it->limite << "\n";
+        }
+    } catch (const std::exception &e) {
+        std::cout << e.what() << "\n";
     }
 }
 
@@ -172,22 +156,21 @@ void maioresGastosDoMes(Carteira &carteira) {
     }
     ignorarLinha();
 
-    if (!carteira.mesAnoValido(mes, ano)) {
-        std::cout << "Data inv\u00e1lida\n";
-        return;
-    }
+    try {
+        if (!carteira.temGastosNoMes(mes, ano)) {
+            std::cout << "Nenhum gasto registrado nesse m\u00eas\n";
+            return;
+        }
 
-    if (!carteira.temGastosNoMes(mes, ano)) {
-        std::cout << "Nenhum gasto registrado nesse m\u00eas\n";
-        return;
-    }
-
-    std::vector<Gasto> lista = carteira.maioresGastosDoMes(mes, ano);
-    std::cout << std::fixed << std::setprecision(2);
-    for (size_t i = 0; i < lista.size(); ++i) {
-        std::cout << (i + 1) << ". " << lista[i].getValor() << " - "
-                  << lista[i].getDescricao() << " (" << lista[i].getData()
-                  << ", " << lista[i].getCategoria() << ")\n";
+        std::vector<Gasto> lista = carteira.maioresGastosDoMes(mes, ano);
+        std::cout << std::fixed << std::setprecision(2);
+        for (size_t i = 0; i < lista.size(); ++i) {
+            std::cout << (i + 1) << ". " << lista[i].getValor() << " - "
+                      << lista[i].getDescricao() << " (" << lista[i].getData()
+                      << ", " << lista[i].getCategoria() << ")\n";
+        }
+    } catch (const std::exception &e) {
+        std::cout << e.what() << "\n";
     }
 }
 
@@ -212,27 +195,27 @@ void categoriasAcimaDoLimite(Carteira &carteira) {
     }
     ignorarLinha();
 
-    if (!carteira.mesAnoValido(mes, ano)) {
-        std::cout << "Data inv\u00e1lida\n";
-        return;
-    }
+    try {
+        if (!carteira.temGastosNoMes(mes, ano)) {
+            std::cout << "Nenhum gasto registrado nesse m\u00eas\n";
+            return;
+        }
 
-    if (!carteira.temGastosNoMes(mes, ano)) {
-        std::cout << "Nenhum gasto registrado nesse m\u00eas\n";
-        return;
-    }
+        std::vector<ResumoCategoria> res =
+            carteira.categoriasAcimaDoLimite(mes, ano);
+        if (res.empty()) {
+            std::cout << "Nenhuma categoria passou do limite\n";
+            return;
+        }
 
-    std::vector<ResumoCategoria> res = carteira.categoriasAcimaDoLimite(mes, ano);
-    if (res.empty()) {
-        std::cout << "Nenhuma categoria passou do limite\n";
-        return;
-    }
-
-    std::cout << std::fixed << std::setprecision(2);
-    for (std::vector<ResumoCategoria>::const_iterator it = res.begin();
-         it != res.end(); ++it) {
-        std::cout << it->nome << ": " << it->total << " de " << it->limite
-                  << "\n";
+        std::cout << std::fixed << std::setprecision(2);
+        for (std::vector<ResumoCategoria>::const_iterator it = res.begin();
+             it != res.end(); ++it) {
+            std::cout << it->nome << ": " << it->total << " de "
+                      << it->limite << "\n";
+        }
+    } catch (const std::exception &e) {
+        std::cout << e.what() << "\n";
     }
 }
 
@@ -244,7 +227,7 @@ void executarInterface(Carteira &carteira) {
 
     try {
         arquivo.carregar(carteira);
-    } catch (const std::invalid_argument &) {
+    } catch (const std::exception &) {
         std::cout << "Arquivo de dados inválido, começando vazio\n";
     }
 
@@ -263,8 +246,8 @@ void executarInterface(Carteira &carteira) {
         if (opcao == 0) {
             try {
                 arquivo.salvar(carteira);
-            } catch (const std::runtime_error &) {
-                std::cout << "Não consegui salvar os dados\n";
+            } catch (const std::exception &e) {
+                std::cout << e.what() << "\n";
             }
             return;
         } else if (opcao == 1) {

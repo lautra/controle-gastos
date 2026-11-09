@@ -15,34 +15,13 @@ struct ResumoCategoria {
     double limite;
 };
 
-enum ResultadoCategoria {
-    CATEGORIA_OK,
-    CATEGORIA_JA_EXISTE,
-    CATEGORIA_NOME_INVALIDO
-};
-
-enum ResultadoLimite {
-    LIMITE_OK,
-    LIMITE_CATEGORIA_NAO_ENCONTRADA,
-    LIMITE_INVALIDO,
-    LIMITE_NOME_INVALIDO
-};
-
-enum ResultadoGasto {
-    GASTO_OK,
-    GASTO_CATEGORIA_NAO_ENCONTRADA,
-    GASTO_VALOR_INVALIDO,
-    GASTO_DATA_INVALIDA,
-    GASTO_TEXTO_INVALIDO
-};
-
 class Carteira {
 public:
-    ResultadoCategoria cadastrarCategoria(const std::string &nome);
-    ResultadoLimite definirLimite(const std::string &nome, double limite);
-    ResultadoGasto registrarGasto(const std::string &descricao, double valor,
-                                  const std::string &data,
-                                  const std::string &categoria);
+    void cadastrarCategoria(const std::string &nome);
+    void definirLimite(const std::string &nome, double limite);
+    void registrarGasto(const std::string &descricao, double valor,
+                        const std::string &data,
+                        const std::string &categoria);
 
     bool mesAnoValido(int mes, int ano) const;
     bool temGastosNoMes(int mes, int ano) const;

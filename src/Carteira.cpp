@@ -1,64 +1,61 @@
 #include "Carteira.hpp"
 
 #include <algorithm>
+#include <stdexcept>
 #include <utility>
 
-ResultadoCategoria Carteira::cadastrarCategoria(const std::string &nome) {
+void Carteira::cadastrarCategoria(const std::string &nome) {
     if (nome.find(';') != std::string::npos) {
-        return CATEGORIA_NOME_INVALIDO;
+        throw std::invalid_argument("Não use ; no texto");
     }
 
     if (categorias.find(nome) != categorias.end()) {
-        return CATEGORIA_JA_EXISTE;
+        throw std::invalid_argument("Categoria já cadastrada");
     }
 
     categorias.insert(std::make_pair(nome, Categoria(nome)));
-    return CATEGORIA_OK;
 }
 
-ResultadoLimite Carteira::definirLimite(const std::string &nome,
-                                        double limite) {
+void Carteira::definirLimite(const std::string &nome, double limite) {
     if (nome.find(';') != std::string::npos) {
-        return LIMITE_NOME_INVALIDO;
+        throw std::invalid_argument("Não use ; no texto");
     }
 
     std::map<std::string, Categoria>::iterator it = categorias.find(nome);
 
     if (it == categorias.end()) {
-        return LIMITE_CATEGORIA_NAO_ENCONTRADA;
+        throw std::invalid_argument("Categoria não encontrada");
     }
 
     if (limite < 0.0) {
-        return LIMITE_INVALIDO;
+        throw std::invalid_argument("Valor inválido");
     }
 
     it->second.setLimite(limite);
-    return LIMITE_OK;
 }
 
-ResultadoGasto Carteira::registrarGasto(const std::string &descricao,
-                                        double valor, const std::string &data,
-                                        const std::string &categoria) {
+void Carteira::registrarGasto(const std::string &descricao, double valor,
+                              const std::string &data,
+                              const std::string &categoria) {
     if (descricao.find(';') != std::string::npos ||
         categoria.find(';') != std::string::npos) {
-        return GASTO_TEXTO_INVALIDO;
+        throw std::invalid_argument("Não use ; no texto");
     }
 
     if (valor <= 0.0) {
-        return GASTO_VALOR_INVALIDO;
+        throw std::invalid_argument("Valor inválido");
     }
 
     if (!dataValida(data)) {
-        return GASTO_DATA_INVALIDA;
+        throw std::invalid_argument("Data inválida");
     }
 
     if (categorias.find(categoria) == categorias.end()) {
-        return GASTO_CATEGORIA_NAO_ENCONTRADA;
+        throw std::invalid_argument("Categoria não encontrada");
     }
 
     gastos.push_back(Gasto(descricao, valor, data, categoria, proximaOrdem));
     proximaOrdem = proximaOrdem + 1;
-    return GASTO_OK;
 }
 
 bool Carteira::mesAnoValido(int mes, int ano) const {
@@ -67,7 +64,7 @@ bool Carteira::mesAnoValido(int mes, int ano) const {
 
 bool Carteira::temGastosNoMes(int mes, int ano) const {
     if (!mesAnoValido(mes, ano)) {
-        return false;
+        throw std::invalid_argument("Data inválida");
     }
 
     std::list<Gasto>::const_iterator it;
@@ -88,10 +85,6 @@ std::map<std::string, double> Carteira::somarGastosDoMes(int mes, int ano) const
     std::map<std::string, double> totais;
     std::list<Gasto>::const_iterator it;
 
-    if (!mesAnoValido(mes, ano)) {
-        return totais;
-    }
-
     for (it = gastos.begin(); it != gastos.end(); ++it) {
         int dia;
         int gmes;
@@ -108,7 +101,7 @@ std::map<std::string, double> Carteira::somarGastosDoMes(int mes, int ano) const
 std::vector<ResumoCategoria> Carteira::totaisPorCategoria(int mes, int ano) {
     std::vector<ResumoCategoria> resultado;
     if (!mesAnoValido(mes, ano)) {
-        return resultado;
+        throw std::invalid_argument("Data inválida");
     }
 
     std::map<std::string, double> totais = somarGastosDoMes(mes, ano);
@@ -144,7 +137,7 @@ bool compararGastosMaior(const Gasto &a, const Gasto &b) {
 std::vector<Gasto> Carteira::maioresGastosDoMes(int mes, int ano) {
     std::vector<Gasto> selecionados;
     if (!mesAnoValido(mes, ano)) {
-        return selecionados;
+        throw std::invalid_argument("Data inválida");
     }
 
     std::list<Gasto>::const_iterator it;
@@ -170,7 +163,7 @@ std::vector<Gasto> Carteira::maioresGastosDoMes(int mes, int ano) {
 std::vector<ResumoCategoria> Carteira::categoriasAcimaDoLimite(int mes, int ano) {
     std::vector<ResumoCategoria> resultado;
     if (!mesAnoValido(mes, ano)) {
-        return resultado;
+        throw std::invalid_argument("Data inválida");
     }
 
     std::map<std::string, double> totais = somarGastosDoMes(mes, ano);
