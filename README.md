@@ -61,3 +61,17 @@ A primeira proposta não recusava o ; ao cadastrar, só ao ler. Precisei pedir.
 A segunda proposta sugeriu salvar com precisão 15 em vez de duas casas fixas, porque 0.001 viraria 0.00 e a linha seria recusada ao recarregar. Aceitei a proposta.
 Ela carrega numa Carteira temporária e só copia no fim, então um arquivo ruim não deixa dados pela metade.
 Conferi que o Arquivo.cpp usa fstream, os dados voltam na segunda execução, arquivo estragado dá Arquivo de dados inválido, começando vazio e o ; dá Não use ; no texto.
+
+## Exceções
+
+- O que pedi à IA: Pedi que ela lesse a DESCRICAO.md e o PLANO.md e dissesse em quais lugares uma exceção (invalid_argument ou runtime_error) substituiria um bool ou um erro ignorado, e onde ficariam os try/catch. Pedi também que só implementasse depois da minha aprovação.
+- O que ela propôs: 
+- Trocar os bool de mês e ano inválidos nas consultas por invalid_argument;
+- Tratar arquivo que existe mas não abre, separando do arquivo inexistente com errno;
+- Trocar os enum da Carteira por exceções, se a descrição valesse para eles;
+- Manter como bool as perguntas de sim ou não, como mesAnoValido e dataValida.
+
+- O que encontrei: Throw em Carteira.cpp (valor, data, categoria, ;, categoria já cadastrada) e em Arquivo.cpp (linha mal formada e falha ao salvar);
+Oito catch em Interface.cpp, nenhum nas outras classes;
+Nenhum enum sobrando;
+As mensagens iguais às de antes, e abc no menu, no valor, no limite e no mês não encerra o programa.
