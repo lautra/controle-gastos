@@ -50,6 +50,8 @@
 - Linha mal formada é: número errado de campos, valor ou limite que não é número, valor menor ou igual a 0, data inválida, ou gasto de categoria que não existe no arquivo.
 - Se o arquivo estava ruim e o programa começou vazio, ao salvar o arquivo anterior é substituído.
 - Categoria sem limite definido é salva com limite 0.
+- Nome de categoria e descrição não podem ser vazio.
+
 
 
 ## Quando algo dá errado
@@ -65,6 +67,7 @@
 - Descrição ou nome com ponto e vírgula: "Não use ; no texto".
 - Arquivo existe mas está com linha mal formada:"Arquivo de dados inválido, começando vazio" e o programa começa sem dados.
 - Não consegui salvar ao sair: "Não consegui salvar os dados".
+- Nome de categoria ou descrição vazios: "Texto não podem ser vazios" e o cadastro não é feito.
 
 ## Classes que eu imagino
 
@@ -72,7 +75,7 @@
 - Categoria: guarda o nome e o limite mensal. Sabe dizer se um total passou do limite.
 - Carteira: guarda as categorias e os gastos, aplica as regras (categoria única, valor maior que zero, data válida) e calcula os totais. Mostra suas categorias e gastos para serem salvos.
 - Interface (menu) fica em arquivos separados: lê teclado e escreve na tela, sem regras dentro. Não é uma classe do sistema.
-- Arquivo: salva os dados da Carteira em dados.txt e carrega de lá. É a única classe que abre arquivo;lança exceção se o arquivo não abrir ou se uma linha estiver mal formada.
+- Arquivo: salva os dados da Carteira em dados.txt e carrega de lá. É a única classe que abre arquivo; lança exceção se o arquivo não abrir ou se uma linha estiver mal formada.
 
 ## Exemplo de uso
 
