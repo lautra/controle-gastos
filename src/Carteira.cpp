@@ -126,8 +126,11 @@ std::vector<ResumoCategoria> Carteira::totaisPorCategoria(int mes, int ano) {
 namespace {
 
 bool compararGastosMaior(const Gasto &a, const Gasto &b) {
-    if (a.getValor() != b.getValor()) {
-        return a.getValor() > b.getValor();
+    if (b < a) {
+        return true;
+    }
+    if (a < b) {
+        return false;
     }
     return a.getOrdem() < b.getOrdem();
 }
