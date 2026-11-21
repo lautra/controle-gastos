@@ -50,7 +50,7 @@
 - Linha mal formada é: número errado de campos, valor ou limite que não é número, valor menor ou igual a 0, data inválida, ou gasto de categoria que não existe no arquivo.
 - Se o arquivo estava ruim e o programa começou vazio, ao salvar o arquivo anterior é substituído.
 - Categoria sem limite definido é salva com limite 0.
-- Nome de categoria e descrição não podem ser vazio.
+- Nome de categoria e descrição não podem ser vazios.
 
 
 
@@ -67,7 +67,7 @@
 - Descrição ou nome com ponto e vírgula: "Não use ; no texto".
 - Arquivo existe mas está com linha mal formada:"Arquivo de dados inválido, começando vazio" e o programa começa sem dados.
 - Não consegui salvar ao sair: "Não consegui salvar os dados".
-- Nome de categoria ou descrição vazios: "Texto não podem ser vazios" e o cadastro não é feito.
+- Nome de categoria ou descrição vazios: "Texto não pode ser vazio" e o cadastro não é feito.
 
 ## Classes que eu imagino
 
