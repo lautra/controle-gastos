@@ -37,7 +37,6 @@ exceção novos.
 - A leitura e a escrita de arquivo ficam numa classe própria. As outras
 classes não abrem arquivo.
 - `throw` nas classes do sistema; `try`/`catch` somente na interface (menu).
-- Quando o estudante pedir uma revisão, não edite nenhum arquivo: liste os
-problemas com o arquivo e a linha.
+- Quando o estudante pedir uma revisão, não edite nenhum arquivo: liste os problemas com o arquivo e a linha.
 - Não altere a seção "Evolução" do `README.md`. Ela é escrita pelo
 estudante.
