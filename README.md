@@ -45,6 +45,8 @@ estiver escrito aqui.
 - Um pedido que deu certo, e por que você acha que deu certo: “Implemente somente a etapa N do @PLANO.md. Antes de editar, me diga quais arquivos vai criar ou alterar.” Ele listava os arquivos antes, e eu conferia se estava dentro do plano.
 - Um pedido que deu errado, o que veio errado e como você mudou o pedido: Na etapa 7, o erros.txt veio sem os casos de letra no lugar de número e de opção 9. Pedi para acrescentar só esses dois, e passou a mostrar Opção inválida e Entrada inválida.
 - Uma coisa que a IA sugeriu e você recusou, e por quê: O plano do OpenCode usou list para os gastos. Notei que vector também serviria, já que só acrescento no fim e percorro. Mantive o list porque cumpre o requisito ‘set ou list’ e porque guarda a ordem de registro, usada no desempate dos maiores gastos. Para ordenar, copio para um vector, já que o sort não funciona na list.
+- Modelos usados no trabalho final: usei DeepSeek v4.1 Flash Free e Big Pickle.
+- Fora do OpenCode usei o Claude para tirar dúvidas e conferir as listas.
 
 # Evolução
 
@@ -70,6 +72,7 @@ Conferi que o Arquivo.cpp usa fstream, os dados voltam na segunda execução, ar
 - Tratar arquivo que existe mas não abre, separando do arquivo inexistente com errno;
 - Trocar os enum da Carteira por exceções, se a descrição valesse para eles;
 - Manter como bool as perguntas de sim ou não, como mesAnoValido e dataValida.
+- Não aceitei tratar o arquivo que existe mas não abre, aceitei trocar os enum da Carteira por exceções, pedi que as mensagens so throw fosse igual à da descrição.
 
 - O que encontrei: Throw em Carteira.cpp (valor, data, categoria, ;, categoria já cadastrada) e em Arquivo.cpp (linha mal formada e falha ao salvar);
 Oito catch em Interface.cpp, nenhum nas outras classes;
@@ -79,8 +82,13 @@ As mensagens iguais às de antes, e abc no menu, no valor, no limite e no mês n
 
 ## Revisão
 
-- O que a IA apontou, e os problemas que corrigi: Pedi que a IA lesse o projeto inteir, sem alterar nenhum arquivo, e apontasse o que podia dar errado: entradas inválidas, casos em que o programa quebra e regras da DESCRICAO.md que o código não cumpre. Pedi a lista em ordem de impotância, com arquivo e linha. 
+- O que a IA apontou, e os problemas que corrigi: Pedi que a IA lesse o projeto inteiro, sem alterar nenhum arquivo, e apontasse o que podia dar errado, em ordem de importância, com arquivo e linha. Ela apontou 10 problemas. Os que mais me chamaram atenção foram nome ou descrição vazios, que deixavam o arquivo com linhas quebradas e faziam os dados sumirem na execução seguinte, e o sort, que não usava o operator< do Gasto.
 
-- Um problema que a IA apontou e eu não corrigi, e por quê: Pedi correção no sort, em src/Carteira.cpp, o comparador compararGastosMaior passasse a usar o operador< do Gasto (a vem antes de b se b < a) e, no comparador (5 linhas novas, 2 removidas), commit 05a7917.
+  Corrigi primeiro o sort, porque o enunciado pede sort com operator< e o meu comparador usava getValor(). O programa funcionava, mas o README dizia uma coisa e o código fazia outra. Pedi que o comparador usasse o operator<. No git diff vi que só o comparador mudou, e testei que a ordem e o desempate continuaram iguais (commit 05a7917).
 
-- O que encontrei nos cenários de teste: ...
+  Corrigi também o nome e a descrição vazios. Antes, escrevi a regra no DESCRICAO.md e fiz um commit. Depois pedi que a Carteira recusasse com invalid_argument e a mensagem "Texto não pode ser vazio", e testei que o nome vazio é recusado e que o dados.txt não fica com a linha C;;0 (commit d1e2ab8).
+
+- Um problema que a IA apontou e eu não corrigi, e por quê: 
+A IA apontou que, se o dados.txt existe mas não abre, por exemplo por falta de permissão, o programa trata como se o arquivo não existisse e começa vazio. Não corrigi porque, no Passo 2, já tinha decidido não tratar esse caso: separar os dois exigiria errno, e  minha descrição não define uma mensagem para esse caso.
+
+- O que encontrei nos cenários de teste: Pedi cenários em exemplos/ e a IA criou entradas_invalidas.txt, com texto onde se espera número, e sem_arquivo.txt, que roda sem dados.txt. Ao rodar, vi que o primeiro mostrou 9 mensagens de entrada inválida, uma para cada abc, e o programa chegou ao fim; o segundo começou vazio, sem erro de arquivo.
