@@ -75,3 +75,12 @@ Conferi que o Arquivo.cpp usa fstream, os dados voltam na segunda execução, ar
 Oito catch em Interface.cpp, nenhum nas outras classes;
 Nenhum enum sobrando;
 As mensagens iguais às de antes, e abc no menu, no valor, no limite e no mês não encerra o programa.
+
+
+## Revisão
+
+- O que a IA apontou, e os problemas que corrigi: Pedi que a IA lesse o projeto inteir, sem alterar nenhum arquivo, e apontasse o que podia dar errado: entradas inválidas, casos em que o programa quebra e regras da DESCRICAO.md que o código não cumpre. Pedi a lista em ordem de impotância, com arquivo e linha. 
+
+- Um problema que a IA apontou e eu não corrigi, e por quê: Pedi correção no sort, em src/Carteira.cpp, o comparador compararGastosMaior passasse a usar o operador< do Gasto (a vem antes de b se b < a) e, no comparador (5 linhas novas, 2 removidas), commit 05a7917.
+
+- O que encontrei nos cenários de teste: ...
