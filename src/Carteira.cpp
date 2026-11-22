@@ -5,6 +5,10 @@
 #include <utility>
 
 void Carteira::cadastrarCategoria(const std::string &nome) {
+    if (nome.empty()) {
+        throw std::invalid_argument("Texto não pode ser vazio");
+    }
+
     if (nome.find(';') != std::string::npos) {
         throw std::invalid_argument("Não use ; no texto");
     }
@@ -17,6 +21,10 @@ void Carteira::cadastrarCategoria(const std::string &nome) {
 }
 
 void Carteira::definirLimite(const std::string &nome, double limite) {
+    if (nome.empty()) {
+        throw std::invalid_argument("Texto não pode ser vazio");
+    }
+
     if (nome.find(';') != std::string::npos) {
         throw std::invalid_argument("Não use ; no texto");
     }
@@ -37,6 +45,10 @@ void Carteira::definirLimite(const std::string &nome, double limite) {
 void Carteira::registrarGasto(const std::string &descricao, double valor,
                               const std::string &data,
                               const std::string &categoria) {
+    if (descricao.empty() || categoria.empty()) {
+        throw std::invalid_argument("Texto não pode ser vazio");
+    }
+
     if (descricao.find(';') != std::string::npos ||
         categoria.find(';') != std::string::npos) {
         throw std::invalid_argument("Não use ; no texto");
